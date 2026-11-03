@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="color-scheme" content="light dark">
+<title>Channel to Playlist</title><link rel="stylesheet" href="popup.css"></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 9h10M7 12h10M7 15h6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v13M6 11l6 6 6-6M5 20h14"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/></symbol>
+</svg>
+
+<header class="top">
+  <img src="icons/icon32.png" width="24" height="24" alt="">
+  <h1>Channel to Playlist</h1>
+  <span id="pill" class="pill" data-state="idle">Idle</span>
+</header>
+
+<main>
+<section class="block" aria-labelledby="h-source">
+  <div class="block-head"><h2 id="h-source">Videos on this page</h2>
+    <button id="scroll" class="ghost sm" title="Scroll the page until no more videos load"><svg class="ic"><use href="#i-down"/></svg>Load all</button>
+    <button id="stopScroll" class="ghost sm" hidden><svg class="ic"><use href="#i-stop"/></svg>Stop</button>
+  </div>
+  <div id="empty" class="empty">
+    <p>Open a channel's <b>Videos</b>, <b>Live</b> or <b>Shorts</b> tab, choose the sort order, and scroll until every video you want is loaded.</p>
+  </div>
+  <div id="result" class="result" hidden>
+    <div class="count"><span id="count" class="num">0</span><span id="countLabel">videos, in page order</span></div>
+    <ol id="preview" class="preview"></ol>
+    <label class="switch"><input id="reverse" type="checkbox"><span class="track" aria-hidden="true"></span><svg class="ic"><use href="#i-swap"/></svg>Reverse order</label>
+  </div>
+  <p id="scrollOut" class="hint" aria-live="polite"></p>
+  <button id="scan" class="secondary wide"><svg class="ic"><use href="#i-scan"/></svg><span>Scan page</span></button>
+</section>
+
+<section class="block" aria-labelledby="h-pl">
+  <h2 id="h-pl">New playlist</h2>
+  <div class="field"><label for="title">Title</label><input id="title" placeholder="Channel name (scan first)" autocomplete="off"></div>
+  <div class="row">
+    <div class="field"><label for="privacy">Visibility</label>
+      <select id="privacy"><option value="UNLISTED">Unlisted</option><option value="PRIVATE">Private</option><option value="PUBLIC">Public</option></select></div>
+    <div class="field narrow"><label for="delay">Delay, ms</label><input id="delay" type="number" min="300" step="100" inputmode="numeric"></div>
+  </div>
+  <label class="check"><input id="skip" type="checkbox"> Skip unavailable videos instead of stopping</label>
+  <div id="confirmBox" class="confirm" role="alert" hidden>
+    <p id="confirmText"></p>
+    <div class="btns"><button id="confirmYes" class="danger sm">Discard and start new</button><button id="confirmNo" class="ghost sm">Keep it</button></div>
+  </div>
+  <button id="startNew" class="primary wide" disabled><svg class="ic"><use href="#i-play"/></svg><span id="startLabel">Create playlist</span></button>
+</section>
+
+<section class="block job" aria-labelledby="h-job">
+  <div class="block-head"><h2 id="h-job">Current job</h2><a id="link" class="link" target="_blank" hidden><svg class="ic"><use href="#i-ext"/></svg>Open playlist</a></div>
+  <p id="noJob" class="hint">No job yet. Progress is saved, so you can close this popup at any time.</p>
+  <div id="jobBody" hidden>
+    <div id="jobTitle" class="job-title"></div>
+    <div class="meter" role="progressbar" id="meter" aria-valuemin="0"><div id="fill" class="fill"></div></div>
+    <div class="stats"><span id="progress" class="num"></span><span id="eta"></span></div>
+    <div id="err" class="err" role="alert" hidden></div>
+    <div id="verifyOut" class="verify" hidden></div>
+    <div class="btns">
+      <button id="resume" class="secondary sm"><svg class="ic"><use href="#i-play"/></svg>Resume</button>
+      <button id="pause" class="secondary sm"><svg class="ic"><use href="#i-pause"/></svg>Pause</button>
+      <button id="verify" class="ghost sm"><svg class="ic"><use href="#i-check"/></svg>Verify</button>
+      <button id="reset" class="ghost sm danger-text"><svg class="ic"><use href="#i-trash"/></svg>Discard</button>
+    </div>
+    <div id="resetBox" class="confirm" role="alert" hidden>
+      <p>Forget this job? The playlist stays on YouTube.</p>
+      <div class="btns"><button id="resetYes" class="danger sm">Discard job</button><button id="resetNo" class="ghost sm">Cancel</button></div>
+    </div>
+    <details><summary>Activity log</summary><pre id="log"></pre></details>
+  </div>
+</section>
+</main>
+<script src="popup.js"></script>
+</body></html>

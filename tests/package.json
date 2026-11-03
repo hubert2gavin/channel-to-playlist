@@ -1,0 +1,1 @@
+{ "name": "channel-to-playlist-tests", "private": true, "scripts": { "test": "node extract-and-runner.test.js" }, "devDependencies": { "jsdom": "^24.0.0" } }
